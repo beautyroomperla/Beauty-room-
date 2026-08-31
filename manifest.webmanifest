@@ -1,0 +1,22 @@
+{
+  "name": "Beauty Room",
+  "short_name": "Beauty Room",
+  "description": "Agenda y expedientes para Beauty Room",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffafb",
+  "theme_color": "#f3cddd",
+  "icons": [
+    {
+      "src": "icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
