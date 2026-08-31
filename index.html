@@ -112,7 +112,7 @@ function render(){
    let aa=appts.filter(a=>a.date===ds && Number(a.time.split(":")[0])===hour);
    h+=`<div class="slot ${cur?"current":""}">${aa.map(a=>{
     let c=clients.find(x=>x.id===a.clientId), svc=services.find(s=>s[0]===a.service), cls=svc?svc[1]:"nail";
-    return `<div class="appt ${cls}" onclick="showProfile('${a.clientId}')"><strong>${a.time} · ${c?.name||"Clienta"}</strong>${a.service}<br>${a.price?"$"+a.price:""} ${a.notes?"· "+a.notes:""}</div>`
+    return `<div class="appt ${cls}" onclick="showAppt('${a.id}')"><strong>${a.time} · ${c?.name||"Clienta"}</strong>${a.service}<br>${a.price?"$"+a.price:""} ${a.notes?"· "+a.notes:""}</div>`
    }).join("")}</div>`;
   });
  });
