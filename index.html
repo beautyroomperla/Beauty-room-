@@ -127,9 +127,81 @@ function renderClients(){
  }).join("")||'<div class="small" style="margin-top:12px">Todavía no hay clientas.</div>';
 }
 function showProfile(cid){
- let c=clients.find(x=>x.id===cid);if(!c)return;
- let hist=appts.filter(a=>a.clientId===cid).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
- profile.innerHTML=`<h3 style="margin:0">${c.name}</h3><div class="small">${c.phone||"Sin teléfono"}</div><p>${c.notes||"Sin notas generales."}</p><div class="history"><strong>Historial de visitas</strong>${hist.map(a=>`<div class="history-item"><strong>${a.date} · ${a.time}</strong><br>💅 ${a.service} ${a.price?"· $"+a.price:""}${a.notes?`<br><span class="small">${a.notes}</span>`:""}</div>`).join("")||'<div class="small" style="margin-top:8px">Aquí aparecerán sus servicios y notas.</div>'}</div>`;
+  const c=clients.find(x=>x.id===cid);
+  if(!c)return;
+
+  const hist=appts
+    .filter(a=>a.clientId===cid)
+    .sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+
+  profile.innerHTML=` 
+    <h3 style="margin:0">${c.name}</h3>
+    <div class="small">
+      ${c.phone ? "Teléfono: "+c.phone : "Sin teléfono"}
+    </div>
+
+    <div class="history">
+      <strong>Historial de visitas</strong>
+
+      ${hist.length
+        ? hist.map(a=>`
+          <div class="history-item">
+            <strong>${a.date} · ${a.time}</strong>
+            <br>
+            ${a.service}
+            ${a.price ? " · $"+a.price : ""}
+            ${a.notes ? "<br><span class='small'>"+a.notes+"</span>" : ""}
+          </div>
+        `).join("")
+        : "<div class='small'>Todavía no hay visitas.</div>"
+      }
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button id="editClientBtn">✏️ Editar clienta</button>
+      <button id="clearHistoryBtn">🗑️ Borrar historial</button>
+    </div>
+  `;
+
+  document.getElementById("editClientBtn").onclick=()=>{
+    const newName=prompt("Nombre de la clienta:",c.name);
+    if(newName===null)return;
+
+    const newPhone=prompt("Teléfono:",c.phone||"");
+    if(newPhone===null)return;
+
+    const newNotes=prompt("Notas generales:",c.notes||"");
+    if(newNotes===null)return;
+
+    if(!newName.trim()){
+      alert("El nombre no puede quedar vacío.");
+      return;
+    }
+
+    c.name=newName.trim();
+    c.phone=newPhone.trim();
+    c.notes=newNotes.trim();
+
+    save();
+    render();
+    showProfile(cid);
+    alert("Clienta actualizada 💗");
+  };
+
+  document.getElementById("clearHistoryBtn").onclick=()=>{
+    if(!hist.length){
+      alert("Esta clienta no tiene historial.");
+      return;
+    }
+
+    if(confirm("¿Quieres borrar TODO el historial de "+c.name+"?")){
+      appts=appts.filter(a=>a.clientId!==cid);
+      save();
+      render();
+      showProfile(cid);
+      alert("Historial borrado 💗");
+    }
+  };
 }
 function openAppt(){
  if(!clients.length){openClient();return}
