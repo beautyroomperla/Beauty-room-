@@ -137,8 +137,50 @@ function openAppt(){
  aService.innerHTML=services.map(s=>`<option>${s[0]}</option>`).join("");
  aDate.value=iso(new Date());aTime.value="10:00";aPrice.value="";aNotes.value="";
  document.getElementById("apptModal").style.display="flex";
-}
-function switchToNewClient(){closeM("apptModal");openClient()}
+} 
+  function showAppt(id){
+  const a=appts.find(x=>x.id===id);
+  if(!a)return;
+
+  const c=clients.find(x=>x.id===a.clientId);
+  if(!c)return;
+
+  const action=prompt(
+    `Cita de ${c.name}\n\n`+
+    `Servicio: ${a.service}\n`+
+    `Fecha: ${a.date}\n`+
+    `Hora: ${a.time}\n\n`+
+    `Escribe:\n`+
+    `1 = Mover cita\n`+
+    `2 = Cancelar cita\n`+
+    `3 = Cerrar`
+  );
+
+  if(action==="1"){
+    const newDate=prompt("Nueva fecha (AAAA-MM-DD):",a.date);
+    if(!newDate)return;
+
+    const newTime=prompt("Nueva hora (ej. 14:00):",a.time);
+    if(!newTime)return;
+
+    a.date=newDate;
+    a.time=newTime;
+
+    save();
+    render();
+    alert("Cita movida correctamente 💗");
+  }
+
+  if(action==="2"){
+    if(confirm(`¿Quieres cancelar la cita de ${c.name}?`)){
+      appts=appts.filter(x=>x.id!==id);
+      save();
+      render();
+      alert("Cita cancelada 💗");
+    }
+  }
+      }
+  function switchToNewClient(){closeM("apptModal");openClient()}
 function saveAppt(){
  appts.push({id:id(),clientId:aClient.value,service:aService.value,date:aDate.value,time:aTime.value,price:aPrice.value,notes:aNotes.value});
  save();closeM("apptModal");render();showProfile(aClient.value);
