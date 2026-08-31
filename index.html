@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beauty Room · Agenda</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fffafb;color:#3b3338;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+:root{--pink:#f3cddd;--pinklight:#fff0f6;--green:#d8eadc;--green2:#eff8f0;--purple:#ddd5ef;--yellow:#f7e7b5;--blue:#d5e7f2;--peach:#f6d8c9;--line:#eadfe5}
+header{background:linear-gradient(135deg,#f4ccde,#fff);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:22px;font-weight:800}.sub{font-size:12px;color:#756b71;margin-top:3px}
+button{border:0;border-radius:13px;padding:11px 15px;background:#3b3338;color:#fff;font-weight:700;cursor:pointer}.ghost{background:#fff;color:#3b3338;border:1px solid var(--line)}
+.wrap{max-width:1250px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.nav{display:flex;align-items:center;gap:8px}.nav h2{margin:0;font-size:18px}.today{background:var(--pinklight);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}
+.calendar{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto;box-shadow:0 5px 20px #00000008}
+.grid{min-width:900px;display:grid;grid-template-columns:64px repeat(6,1fr)}
+.head{padding:12px 6px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff7fa;font-size:12px;font-weight:800}
+.head.current{background:var(--pink);position:relative}.head.current:after{content:"HOY";display:block;font-size:9px;margin-top:3px}
+.time{min-height:78px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:11px;color:#8b7e85;text-align:right;padding:8px 7px}
+.slot{min-height:78px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px}
+.slot.current{background:#fffafd}
+.appt{border-radius:11px;padding:8px 9px;font-size:11px;min-height:64px;box-shadow:0 2px 5px #0000000d;cursor:pointer}
+.appt strong{display:block;font-size:12px;margin-bottom:2px}.nail{background:var(--pink)}.lash{background:var(--green)}.brow{background:var(--purple)}.ped{background:var(--yellow)}.hair{background:var(--blue)}.wax{background:var(--peach)}
+.legend{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#665d62}.dot{display:inline-flex;align-items:center;gap:5px}.dot i{width:10px;height:10px;border-radius:50%;display:inline-block}.panel{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}.card h3{margin:0 0 10px}
+.client-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.client-row:last-child{border-bottom:0}.small{font-size:11px;color:#81757c}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px;z-index:5}.modalbox{width:min(520px,100%);background:white;border-radius:20px;padding:20px;max-height:90vh;overflow:auto}.modalbox h2{margin-top:0}
+label{font-size:12px;color:#756b71;display:block;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;font:inherit}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.history{margin-top:12px;background:#fff7fa;border-radius:13px;padding:11px}.history-item{padding:10px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border-bottom:0}
+@media(max-width:700px){.panel{grid-template-columns:1fr}.wrap{padding:10px}header{padding:15px}.logo{font-size:19px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f3cddd">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+<header>
+  <div><div class="logo">Beauty Room 💗</div><div class="sub">Tu agenda semanal · simple y visual</div></div>
+  <button onclick="openAppt()">＋ Agendar cita</button>
+</header>
+<div class="wrap">
+  <div class="top">
+    <div class="nav">
+      <button class="ghost" onclick="moveWeek(-1)">‹</button>
+      <h2 id="weekTitle"></h2>
+      <button class="ghost" onclick="moveWeek(1)">›</button>
+      <button class="ghost" onclick="goToday()">Hoy</button>
+    </div>
+    <div class="today" id="todayLabel"></div>
+  </div>
+
+  <div class="calendar"><div id="grid" class="grid"></div></div>
+  <div class="legend">
+    <span class="dot"><i class="nail"></i>Uñas</span>
+    <span class="dot"><i class="lash"></i>Pestañas</span>
+    <span class="dot"><i class="brow"></i>Cejas</span>
+    <span class="dot"><i class="ped"></i>Pedicure</span>
+    <span class="dot"><i class="hair"></i>Cabello</span>
+    <span class="dot"><i class="wax"></i>Depilación</span>
+  </div>
+
+  <div class="panel">
+    <div class="card"><h3>👩 Mis clientas</h3><input id="search" placeholder="Buscar por nombre..." oninput="renderClients()"><div id="clients"></div></div>
+    <div class="card"><h3>📋 Expediente</h3><div id="profile" class="small">Toca una cita o una clienta para ver su expediente.</div></div>
+  </div>
+</div>
+
+<div class="modal" id="apptModal"><div class="modalbox">
+<h2>＋ Agendar cita</h2>
+<label>1. ¿Para quién?</label><select id="aClient"></select>
+<div id="newClientLink" class="small" style="margin-top:6px;cursor:pointer" onclick="switchToNewClient()">＋ Crear nueva clienta</div>
+<label>2. Servicio</label><select id="aService"></select>
+<div class="row"><div><label>Fecha</label><input id="aDate" type="date"></div><div><label>Hora</label><input id="aTime" type="time"></div></div>
+<label>Precio</label><input id="aPrice" type="number" placeholder="$">
+<label>Notas de esta visita</label><textarea id="aNotes" rows="3" placeholder="Color, diseño, largo, retoque, etc."></textarea>
+<div class="actions"><button onclick="saveAppt()">Guardar cita</button><button class="ghost" onclick="closeM('apptModal')">Cancelar</button></div>
+</div></div>
+
+<div class="modal" id="clientModal"><div class="modalbox">
+<h2>＋ Nueva clienta</h2><label>Nombre</label><input id="cName"><label>Teléfono</label><input id="cPhone"><label>Notas generales</label><textarea id="cNotes" rows="3" placeholder="Preferencias o información que quieras recordar..."></textarea>
+<div class="actions"><button onclick="saveClient()">Guardar clienta</button><button class="ghost" onclick="closeM('clientModal')">Cancelar</button></div>
+</div></div>
+
+<script>
+const services=[
+ ["Acrílicas","nail"],["Gel semipermanente","nail"],["Ruber","nail"],["Manicure","nail"],
+ ["Lifting de pestañas","lash"],["Laminado de cejas","brow"],["Pedicure","ped"],["Corte de cabello","hair"],["Depilación","wax"]
+];
+let clients=JSON.parse(localStorage.getItem("br2_clients")||"[]");
+let appts=JSON.parse(localStorage.getItem("br2_appts")||"[]");
+let weekStart=monday(new Date()); weekStart.setHours(0,0,0,0);
+const hours=[9,10,11,12,13,14,15,16,17,18];
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function iso(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function monday(d){let x=new Date(d);let n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);return x}
+function fmt(d,opt={}){return d.toLocaleDateString("es-MX",opt)}
+function save(){localStorage.setItem("br2_clients",JSON.stringify(clients));localStorage.setItem("br2_appts",JSON.stringify(appts))}
+function goToday(){weekStart=monday(new Date());render()}
+function moveWeek(n){weekStart.setDate(weekStart.getDate()+n*7);render()}
+function render(){
+ let days=Array.from({length:6},(_,i)=>{let d=new Date(weekStart);d.setDate(d.getDate()+i);return d});
+ document.getElementById("weekTitle").textContent=`${fmt(days[0],{day:"numeric",month:"long"})} – ${fmt(days[5],{day:"numeric",month:"long",year:"numeric"})}`;
+ document.getElementById("todayLabel").textContent=`Hoy: ${fmt(new Date(),{weekday:"long",day:"numeric",month:"long"})}`;
+ let h='<div class="head"></div>';
+ days.forEach(d=>{let cur=iso(d)===iso(new Date());h+=`<div class="head ${cur?"current":""}">${fmt(d,{weekday:"short"})}<br>${d.getDate()}</div>`});
+ hours.forEach(hour=>{
+  h+=`<div class="time">${String(hour).padStart(2,"0")}:00</div>`;
+  days.forEach(d=>{
+   let ds=iso(d), cur=ds===iso(new Date());
+   let aa=appts.filter(a=>a.date===ds && Number(a.time.split(":")[0])===hour);
+   h+=`<div class="slot ${cur?"current":""}">${aa.map(a=>{
+    let c=clients.find(x=>x.id===a.clientId), svc=services.find(s=>s[0]===a.service), cls=svc?svc[1]:"nail";
+    return `<div class="appt ${cls}" onclick="showProfile('${a.clientId}')"><strong>${a.time} · ${c?.name||"Clienta"}</strong>${a.service}<br>${a.price?"$"+a.price:""} ${a.notes?"· "+a.notes:""}</div>`
+   }).join("")}</div>`;
+  });
+ });
+ document.getElementById("grid").innerHTML=h;renderClients();
+}
+function renderClients(){
+ let q=(search.value||"").toLowerCase();
+ clients.filter(c=>c.name.toLowerCase().includes(q)).forEach(()=>{});
+ document.getElementById("clients").innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)).map(c=>{
+  let count=appts.filter(a=>a.clientId===c.id).length;
+  return `<div class="client-row" onclick="showProfile('${c.id}')" style="cursor:pointer"><div><strong>${c.name}</strong><div class="small">${c.phone||"Sin teléfono"}</div></div><div class="small">${count} visita${count===1?"":"s"}</div></div>`
+ }).join("")||'<div class="small" style="margin-top:12px">Todavía no hay clientas.</div>';
+}
+function showProfile(cid){
+ let c=clients.find(x=>x.id===cid);if(!c)return;
+ let hist=appts.filter(a=>a.clientId===cid).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+ profile.innerHTML=`<h3 style="margin:0">${c.name}</h3><div class="small">${c.phone||"Sin teléfono"}</div><p>${c.notes||"Sin notas generales."}</p><div class="history"><strong>Historial de visitas</strong>${hist.map(a=>`<div class="history-item"><strong>${a.date} · ${a.time}</strong><br>💅 ${a.service} ${a.price?"· $"+a.price:""}${a.notes?`<br><span class="small">${a.notes}</span>`:""}</div>`).join("")||'<div class="small" style="margin-top:8px">Aquí aparecerán sus servicios y notas.</div>'}</div>`;
+}
+function openAppt(){
+ if(!clients.length){openClient();return}
+ aClient.innerHTML=clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+ aService.innerHTML=services.map(s=>`<option>${s[0]}</option>`).join("");
+ aDate.value=iso(new Date());aTime.value="10:00";aPrice.value="";aNotes.value="";
+ document.getElementById("apptModal").style.display="flex";
+}
+function switchToNewClient(){closeM("apptModal");openClient()}
+function saveAppt(){
+ appts.push({id:id(),clientId:aClient.value,service:aService.value,date:aDate.value,time:aTime.value,price:aPrice.value,notes:aNotes.value});
+ save();closeM("apptModal");render();showProfile(aClient.value);
+}
+function openClient(){cName.value="";cPhone.value="";cNotes.value="";document.getElementById("clientModal").style.display="flex"}
+function saveClient(){
+ if(!cName.value.trim())return alert("Pon el nombre de la clienta.");
+ let cid=id();clients.push({id:cid,name:cName.value.trim(),phone:cPhone.value.trim(),notes:cNotes.value.trim()});save();closeM("clientModal");render();showProfile(cid);
+}
+function closeM(x){document.getElementById(x).style.display="none"}
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js"));
+}
+</script>
+</body>
+</html>
