@@ -39,6 +39,7 @@ label{font-size:12px;color:#756b71;display:block;margin:10px 0 5px}input,select,
 <header>
   <div><div class="logo">Beauty Room 💗</div><div class="sub">Tu agenda semanal · simple y visual</div></div>
   <button onclick="openAppt()">＋ Agendar cita</button>
+  <button class="ghost" onclick="openPersonal()">🏠 Mi tiempo</button>
 </header>
 <div class="wrap">
   <div class="top">
@@ -82,7 +83,42 @@ label{font-size:12px;color:#756b71;display:block;margin:10px 0 5px}input,select,
 <h2>＋ Nueva clienta</h2><label>Nombre</label><input id="cName"><label>Teléfono</label><input id="cPhone"><label>Notas generales</label><textarea id="cNotes" rows="3" placeholder="Preferencias o información que quieras recordar..."></textarea>
 <div class="actions"><button onclick="saveClient()">Guardar clienta</button><button class="ghost" onclick="closeM('clientModal')">Cancelar</button></div>
 </div></div>
+</div>
+<div class="modal" id="personalModal">
+  <div class="modalbox">
+    <h2>🏠 Mi tiempo</h2>
 
+    <label>¿Qué tienes?</label>
+    <select id="personalType">
+      <option value="Comida">🍽️ Comida</option>
+      <option value="Dentista">🦷 Dentista</option>
+      <option value="Fisio">💆🏻‍♀️ Fisio</option>
+      <option value="Cumpleaños">🎂 Cumpleaños</option>
+      <option value="Personal">📌 Personal</option>
+      <option value="Otro">📝 Otro</option>
+    </select>
+
+    <label>Fecha</label>
+    <input id="personalDate" type="date">
+
+    <label>Hora de inicio</label>
+    <input id="personalStart" type="time">
+    <label>Hora de término</label>
+<input id="personalEnd" type="time">
+
+<label>Notas</label>
+<textarea id="personalNotes" rows="3"
+  placeholder="Ej. comida con mi familia..."></textarea>
+
+<div class="actions">
+  <button class="ghost" onclick="closePersonal()">Cancelar</button>
+  <button onclick="savePersonal()">Guardar</button>
+</div>
+
+</div>
+</div>
+
+    
 <script>
 const services=[
  ["Acrílicas","nail"],["Gel semipermanente","nail"],["Ruber","nail"],["Manicure","nail"],
