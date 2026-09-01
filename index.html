@@ -307,7 +307,7 @@ render();
 alert("PASÓ EL OLD");
     const today = new Date().toISOString().slice(0,10);
   const todayApps = apps.filter(a => a.date === today);
-    
+  alert("PASÓ TODAYAPPS");  
  const list = todayApps.length
     ? todayApps.map(a => {
         const c = clients.find(x => x.id === a.clientId);
