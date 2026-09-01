@@ -307,8 +307,7 @@ render();
   if(old) old.remove();
 alert("paso el old");
     alert("voy a calcular today");
-    const today = iso(new Date());
-
+    const today = new Date().toISOString().slice(0,10);
   const todayApps = apps
     .filter(a => a.date === today)
     .sort((a,b) => a.time.localeCompare(b.time));
