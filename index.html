@@ -302,11 +302,11 @@ function closeM(x){document.getElementById(x).style.display="none"}
 render();
   function openPersonal(){
     alert("si funciona");
+    alert("encontré el modal");
   let old = document.getElementById("personalModal");
   if(old) old.remove();
 alert("paso el old");
-    
-  const today = iso(new Date());
+    const today = iso(new Date());
 
   const todayApps = apps
     .filter(a => a.date === today)
