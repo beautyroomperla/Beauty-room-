@@ -301,17 +301,15 @@ function saveClient(){
 function closeM(x){document.getElementById(x).style.display="none"}
 render();
   function openPersonal(){
-    alert("si funciona");
-    alert("encontré el modal");
+    
   let old = document.getElementById("personalModal");
   if(old) old.remove();
-alert("paso el old");
-    alert("voy a calcular today");
+
     const today = new Date().toISOString().slice(0,10);
   const todayApps = apps
     .filter(a => a.date === today)
     .sort((a,b) => a.time.localeCompare(b.time));
-    alert("pasé todayApps");
+    
  const list = todayApps.length
     ? todayApps.map(a => {
         const c = clients.find(x => x.id === a.clientId);
