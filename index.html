@@ -304,7 +304,7 @@ render();
     alert("ENTRÉ A MI TIEMPO");
   let old = document.getElementById("personalModal");
   if(old) old.remove();
-
+alert("PASÓ EL OLD");
     const today = new Date().toISOString().slice(0,10);
   const todayApps = apps.filter(a => a.date === today);
     
