@@ -310,8 +310,8 @@ render();
   const todayApps = appts.filter(a => a.date === today);
     
   
- const list = todayappts.length
-    ? todayappts.map(a => {
+ const list = todayAppts.length
+    ? todayAppts.map(a => {
         const c = clients.find(x => x.id === a.clientId);
         return `
           <div style="
