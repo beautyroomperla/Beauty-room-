@@ -1,437 +1,238 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Beauty Room · Agenda</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#fffafb;color:#3b3338;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-:root{--pink:#f3cddd;--pinklight:#fff0f6;--green:#d8eadc;--green2:#eff8f0;--purple:#ddd5ef;--yellow:#f7e7b5;--blue:#d5e7f2;--peach:#f6d8c9;--line:#eadfe5}
-header{background:linear-gradient(135deg,#f4ccde,#fff);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{font-size:22px;font-weight:800}.sub{font-size:12px;color:#756b71;margin-top:3px}
-button{border:0;border-radius:13px;padding:11px 15px;background:#3b3338;color:#fff;font-weight:700;cursor:pointer}.ghost{background:#fff;color:#3b3338;border:1px solid var(--line)}
-.wrap{max-width:1250px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
-.nav{display:flex;align-items:center;gap:8px}.nav h2{margin:0;font-size:18px}.today{background:var(--pinklight);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}
-.calendar{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto;box-shadow:0 5px 20px #00000008}
-.grid{min-width:900px;display:grid;grid-template-columns:64px repeat(6,1fr)}
-.head{padding:12px 6px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff7fa;font-size:12px;font-weight:800}
-.head.current{background:var(--pink);position:relative}.head.current:after{content:"HOY";display:block;font-size:9px;margin-top:3px}
-.time{min-height:78px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:11px;color:#8b7e85;text-align:right;padding:8px 7px}
-.slot{min-height:78px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px}
-.slot.current{background:#fffafd}
-.appt{border-radius:11px;padding:8px 9px;font-size:11px;min-height:64px;box-shadow:0 2px 5px #0000000d;cursor:pointer}
-.appt strong{display:block;font-size:12px;margin-bottom:2px}.nail{background:var(--pink)}.lash{background:var(--green)}.brow{background:var(--purple)}.ped{background:var(--yellow)}.hair{background:var(--blue)}.wax{background:var(--peach)}
-.legend{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#665d62}.dot{display:inline-flex;align-items:center;gap:5px}.dot i{width:10px;height:10px;border-radius:50%;display:inline-block}.panel{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}.card h3{margin:0 0 10px}
-.client-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.client-row:last-child{border-bottom:0}.small{font-size:11px;color:#81757c}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px;z-index:5}.modalbox{width:min(520px,100%);background:white;border-radius:20px;padding:20px;max-height:90vh;overflow:auto}.modalbox h2{margin-top:0}
-label{font-size:12px;color:#756b71;display:block;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;font:inherit}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.history{margin-top:12px;background:#fff7fa;border-radius:13px;padding:11px}.history-item{padding:10px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border-bottom:0}
-@media(max-width:700px){.panel{grid-template-columns:1fr}.wrap{padding:10px}header{padding:15px}.logo{font-size:19px}}
-</style>
-
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#f3cddd">
-<meta name="mobile-web-app-capable" content="yes">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7d8e8">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Beauty Room · Agenda</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--pink:#e9a9c8;--pink2:#fff0f7;--green:#b9d8c5;--ink:#493b44;--muted:#887982;--line:#eadde5;--bg:#fffafc;--danger:#d96b78;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:12px;padding:10px 14px;background:var(--pink);color:#4b3541;font-weight:700;cursor:pointer}
+button.ghost{background:#fff;border:1px solid var(--line)}button.danger{background:#f7d9de;color:#8d3543}
+button.small{padding:7px 10px;font-size:13px}.wrap{max-width:1200px;margin:auto;padding:14px}
+header{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.brand{font-size:23px;font-weight:800}.sub{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.toolbar{display:flex;gap:7px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.nav{display:flex;gap:6px;align-items:center}.range{font-weight:800;min-width:210px;text-align:center}
+.calendar{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto;box-shadow:0 5px 18px #6c49630d}
+.weekgrid{display:grid;grid-template-columns:64px repeat(7,minmax(130px,1fr));min-width:1000px}
+.monthgrid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));min-width:840px}
+.head{padding:10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:#fff8fb;text-align:center;font-size:13px}
+.dayhead strong{display:block;font-size:15px}.today{outline:2px solid var(--pink);outline-offset:-2px}
+.timecol{border-right:1px solid var(--line);background:#fffafc}.time{height:48px;border-bottom:1px solid #f1e8ed;padding:5px;font-size:11px;color:var(--muted);text-align:right}
+.daycol{position:relative;border-right:1px solid var(--line);min-height:48px;background:repeating-linear-gradient(to bottom,#fff 0,#fff 47px,#f3eaf0 48px)}
+.appt{position:absolute;left:4px;right:4px;min-height:38px;border-radius:10px;padding:6px 7px;background:#f5d5e5;border-left:4px solid #d98bb1;overflow:hidden;box-shadow:0 2px 7px #5a40500f;z-index:3;cursor:pointer}
+.appt b{font-size:12px}.appt .small,.block .small{font-size:11px}
+.block{position:absolute;left:4px;right:4px;min-height:38px;border-radius:10px;padding:6px 7px;background:#dfeee4;border-left:4px solid #84ad92;overflow:hidden;z-index:2}
+.monthcell{min-height:115px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;cursor:pointer;background:#fff}
+.monthcell:hover{background:#fff8fb}.monthnum{font-weight:800}.mini{font-size:11px;padding:3px 5px;border-radius:6px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini.ap{background:#f6dce9}.mini.bl{background:#e0eee4}.mini.rem{background:#fff0c8}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 25px #6c49630d}
+.modal{position:fixed;inset:0;background:#4a354966;display:none;align-items:center;justify-content:center;padding:15px;z-index:50}.modal.open{display:flex}
+.dialog{width:min(96vw,560px);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;padding:18px}
+.form{display:grid;gap:11px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px}.field label{font-size:12px;font-weight:800}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}.field textarea{min-height:80px;resize:vertical}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modalhead h2{margin:0;font-size:20px}.muted{color:var(--muted)}.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}.itemtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.empty{padding:25px;text-align:center;color:var(--muted)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.photo{position:relative}.photo img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.photo button{position:absolute;right:4px;top:4px;padding:4px 7px;background:#fff}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#493b44;color:#fff;padding:10px 15px;border-radius:12px;display:none;z-index:100}
+@media(max-width:700px){.wrap{padding:9px}.brand{font-size:20px}.row{grid-template-columns:1fr}.actions button{padding:9px}.range{min-width:auto}.monthgrid{min-width:700px}}
+</style>
 </head>
 <body>
-<header>
-  <div><div class="logo">Beauty Room 💗</div><div class="sub">Tu agenda semanal · simple y visual</div></div>
-  <button onclick="openAppt()">＋ Agendar cita</button>
-  <button class="ghost" onclick="openPersonal()">🏠 Mi tiempo</button>
-</header>
 <div class="wrap">
-  <div class="top">
-    <div class="nav">
-      <button class="ghost" onclick="moveWeek(-1)">‹</button>
-      <h2 id="weekTitle"></h2>
-      <button class="ghost" onclick="moveWeek(1)">›</button>
-      <button class="ghost" onclick="goToday()">Hoy</button>
-    </div>
-    <div class="today" id="todayLabel"></div>
+<header>
+  <div><div class="brand">🌸 Beauty Room</div><div class="sub">Agenda · clientas · servicios · recordatorios</div></div>
+  <div class="actions">
+    <button onclick="openAppointment()">＋ Cita</button>
+    <button class="ghost" onclick="openClients()">👩🏻 Clientas</button>
+    <button class="ghost" onclick="openPersonal()">🏠 Mi tiempo</button>
+    <button class="ghost" onclick="openReminders()">🔔 Recordatorios</button>
+    <button class="ghost" onclick="openServices()">💅 Servicios</button>
+    <button class="ghost" onclick="openSettings()">⚙️</button>
   </div>
+</header>
 
-  <div class="calendar"><div id="grid" class="grid"></div></div>
-  <div class="legend">
-    <span class="dot"><i class="nail"></i>Uñas</span>
-    <span class="dot"><i class="lash"></i>Pestañas</span>
-    <span class="dot"><i class="brow"></i>Cejas</span>
-    <span class="dot"><i class="ped"></i>Pedicure</span>
-    <span class="dot"><i class="hair"></i>Cabello</span>
-    <span class="dot"><i class="wax"></i>Depilación</span>
+<div class="toolbar">
+  <div class="nav">
+    <button class="ghost" onclick="movePeriod(-1)">‹</button>
+    <button class="ghost" onclick="goToday()">Hoy</button>
+    <button class="ghost" onclick="movePeriod(1)">›</button>
+    <span id="range" class="range"></span>
   </div>
-
-  <div class="panel">
-    <div class="card"><h3>👩 Mis clientas</h3><input id="search" placeholder="Buscar por nombre..." oninput="renderClients()"><div id="clients"></div></div>
-    <div class="card"><h3>📋 Expediente</h3><div id="profile" class="small">Toca una cita o una clienta para ver su expediente.</div></div>
+  <div class="nav">
+    <button id="weekBtn" onclick="setView('week')">Semana</button>
+    <button id="monthBtn" class="ghost" onclick="setView('month')">Mes</button>
   </div>
 </div>
-
-<div class="modal" id="apptModal"><div class="modalbox">
-<h2>＋ Agendar cita</h2>
-<label>1. ¿Para quién?</label><select id="aClient"></select>
-<div id="newClientLink" class="small" style="margin-top:6px;cursor:pointer" onclick="switchToNewClient()">＋ Crear nueva clienta</div>
-<label>2. Servicio</label><select id="aService"></select>
-<div class="row"><div><label>Fecha</label><input id="aDate" type="date"></div><div><label>Hora</label><input id="aTime" type="time"></div></div>
-<label>Precio</label><input id="aPrice" type="number" placeholder="$">
-<label>Notas de esta visita</label><textarea id="aNotes" rows="3" placeholder="Color, diseño, largo, retoque, etc."></textarea>
-<div class="actions"><button onclick="saveAppt()">Guardar cita</button><button class="ghost" onclick="closeM('apptModal')">Cancelar</button></div>
-</div></div>
-
-<div class="modal" id="clientModal"><div class="modalbox">
-<h2>＋ Nueva clienta</h2><label>Nombre</label><input id="cName"><label>Teléfono</label><input id="cPhone"><label>Notas generales</label><textarea id="cNotes" rows="3" placeholder="Preferencias o información que quieras recordar..."></textarea>
-<div class="actions"><button onclick="saveClient()">Guardar clienta</button><button class="ghost" onclick="closeM('clientModal')">Cancelar</button></div>
-</div></div>
-</div>
-<div class="modal" id="personalModal">
-  <div class="modalbox">
-    <h2>🏠 Mi tiempo</h2>
-
-    <label>¿Qué tienes?</label>
-    <select id="personalType">
-      <option value="Comida">🍽️ Comida</option>
-      <option value="Dentista">🦷 Dentista</option>
-      <option value="Fisio">💆🏻‍♀️ Fisio</option>
-      <option value="Cumpleaños">🎂 Cumpleaños</option>
-      <option value="Personal">📌 Personal</option>
-      <option value="Otro">📝 Otro</option>
-    </select>
-
-    <label>Fecha</label>
-    <input id="personalDate" type="date">
-
-    <label>Hora de inicio</label>
-    <input id="personalStart" type="time">
-    <label>Hora de término</label>
-<input id="personalEnd" type="time">
-
-<label>Notas</label>
-<textarea id="personalNotes" rows="3"
-  placeholder="Ej. comida con mi familia..."></textarea>
-
-<div class="actions">
-  <button class="ghost" onclick="closePersonal()">Cancelar</button>
-  <button onclick="savePersonal()">Guardar</button>
+<div id="calendar" class="calendar"></div>
 </div>
 
-</div>
-</div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="dialog" class="dialog"></div></div>
+<div id="toast" class="toast"></div>
 
-    
 <script>
-const services=[
- ["Acrílicas","nail"],["Gel semipermanente","nail"],["Ruber","nail"],["Manicure","nail"],
- ["Lifting de pestañas","lash"],["Laminado de cejas","brow"],["Pedicure","ped"],["Corte de cabello","hair"],["Depilación","wax"]
+const KEY='beautyRoomV3';
+const defaultServices=[
+ ['Uñas acrílicas',0],['Gel semipermanente',0],['Rubber',0],['Corte',80],['Manicure',250],
+ ['Pedicure',300],['Peinado',200],['Lifting de pestañas',150],['Laminado de cejas',150],['Depilación',50]
 ];
-let clients=JSON.parse(localStorage.getItem("br2_clients")||"[]");
-let appts=JSON.parse(localStorage.getItem("br2_appts")||"[]");
-let weekStart=monday(new Date()); weekStart.setHours(0,0,0,0);
-const hours=[9,10,11,12,13,14,15,16,17,18];
-function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function iso(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-function monday(d){let x=new Date(d);let n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);return x}
-function fmt(d,opt={}){return d.toLocaleDateString("es-MX",opt)}
-function save(){localStorage.setItem("br2_clients",JSON.stringify(clients));localStorage.setItem("br2_appts",JSON.stringify(appts))}
-function goToday(){weekStart=monday(new Date());render()}
-function moveWeek(n){weekStart.setDate(weekStart.getDate()+n*7);render()}
-function render(){
- let days=Array.from({length:6},(_,i)=>{let d=new Date(weekStart);d.setDate(d.getDate()+i);return d});
- document.getElementById("weekTitle").textContent=`${fmt(days[0],{day:"numeric",month:"long"})} – ${fmt(days[5],{day:"numeric",month:"long",year:"numeric"})}`;
- document.getElementById("todayLabel").textContent=`Hoy: ${fmt(new Date(),{weekday:"long",day:"numeric",month:"long"})}`;
- let h='<div class="head"></div>';
- days.forEach(d=>{let cur=iso(d)===iso(new Date());h+=`<div class="head ${cur?"current":""}">${fmt(d,{weekday:"short"})}<br>${d.getDate()}</div>`});
- hours.forEach(hour=>{
-  h+=`<div class="time">${String(hour).padStart(2,"0")}:00</div>`;
-  days.forEach(d=>{
-   let ds=iso(d), cur=ds===iso(new Date());
-   let aa=appts.filter(a=>a.date===ds && Number(a.time.split(":")[0])===hour);
-   h+=`<div class="slot ${cur?"current":""}">${aa.map(a=>{
-    let c=clients.find(x=>x.id===a.clientId), svc=services.find(s=>s[0]===a.service), cls=svc?svc[1]:"nail";
-    return `<div class="appt ${cls}" onclick="showAppt('${a.id}')"><strong>${a.time} · ${c?.name||"Clienta"}</strong>${a.service}<br>${a.price?"$"+a.price:""} ${a.notes?"· "+a.notes:""}</div>`
-   }).join("")}</div>`;
-  });
+let db=load();
+let view='week', cursor=new Date(), currentClient=null;
+
+function load(){
+ try{
+  const x=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(x)return {...x,clients:x.clients||[],appts:x.appts||[],blocks:x.blocks||[],reminders:x.reminders||[],services:x.services||defaultServices.map(([name,price])=>({id:uid(),name,price}))};
+ }catch(e){}
+ return {clients:[],appts:[],blocks:[],reminders:[],services:defaultServices.map(([name,price])=>({id:uid(),name,price}))};
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function pad(n){return String(n).padStart(2,'0')}
+function iso(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function fromISO(s){let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function today(){return iso(new Date())}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function timeMin(t){let [h,m]=String(t||'').split(':').map(Number);return (h||0)*60+(m||0)}
+function validTime(t){return /^([01]\\d|2[0-3]):[0-5]\\d$/.test(t)}
+function overlaps(a,b){return a.date===b.date && timeMin(a.start)<timeMin(b.end) && timeMin(b.start)<timeMin(a.end)}
+function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
+function openModal(html){document.getElementById('dialog').innerHTML=html;document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open');currentClient=null}
+
+function monday(d){let x=new Date(d);let day=x.getDay();let diff=day===0?-6:1-day;x.setDate(x.getDate()+diff);x.setHours(0,0,0,0);return x}
+function setView(v){view=v;render()}
+function movePeriod(n){if(view==='week')cursor.setDate(cursor.getDate()+n*7);else cursor.setMonth(cursor.getMonth()+n);render()}
+function goToday(){cursor=new Date();render()}
+function render(){view==='week'?renderWeek():renderMonth()}
+
+function renderWeek(){
+ let start=monday(cursor), days=[];
+ for(let i=0;i<7;i++){let d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}
+ document.getElementById('range').textContent=`${days[0].toLocaleDateString('es-MX',{day:'numeric',month:'short'})} – ${days[6].toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}`;
+ document.getElementById('weekBtn').className='';document.getElementById('monthBtn').className='ghost';
+ let html='<div class="weekgrid"><div class="head">Hora</div>';
+ days.forEach(d=>html+=`<div class="head ${iso(d)===today()?'today':''} dayhead">${d.toLocaleDateString('es-MX',{weekday:'short'})}<strong>${d.getDate()}</strong></div>`);
+ html+='<div class="timecol">';
+ let startH=Math.min(db.settings?.startHour??6,23), endH=Math.max(db.settings?.endHour??22,startH+1);
+ for(let h=startH;h<endH;h++)html+=`<div class="time">${pad(h)}:00</div>`;
+ html+='</div>';
+ days.forEach(d=>{
+   html+=`<div class="daycol" data-date="${iso(d)}" onclick="dayClick(event,'${iso(d)}')">`;
+   for(let h=startH;h<endH;h++)html+=`<div style="height:48px"></div>`;
+   const height=(endH-startH)*48;
+   const date=iso(d);
+   db.blocks.filter(x=>x.date===date).forEach(b=>html+=blockHtml(b,startH,height));
+   db.appts.filter(x=>x.date===date).forEach(a=>html+=apptHtml(a,startH,height));
+   html+='</div>';
  });
- document.getElementById("grid").innerHTML=h;renderClients();
+ html+='</div>';document.getElementById('calendar').innerHTML=html;
 }
-function renderClients(){
- let q=(search.value||"").toLowerCase();
- clients.filter(c=>c.name.toLowerCase().includes(q)).forEach(()=>{});
- document.getElementById("clients").innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)).map(c=>{
-  let count=appts.filter(a=>a.clientId===c.id).length;
-  return `<div class="client-row" onclick="showProfile('${c.id}')" style="cursor:pointer"><div><strong>${c.name}</strong><div class="small">${c.phone||"Sin teléfono"}</div></div><div class="small">${count} visita${count===1?"":"s"}</div></div>`
- }).join("")||'<div class="small" style="margin-top:12px">Todavía no hay clientas.</div>';
+function posStyle(a,startH,height){
+ let top=(timeMin(a.start)-startH*60)*48/60;
+ let h=Math.max(38,(timeMin(a.end)-timeMin(a.start))*48/60);
+ return `top:${top}px;height:${h}px`;
 }
-function showProfile(cid){
-  const c=clients.find(x=>x.id===cid);
-  if(!c)return;
-
-  const hist=appts
-    .filter(a=>a.clientId===cid)
-    .sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
-
-  profile.innerHTML=` 
-    <h3 style="margin:0">${c.name}</h3>
-    <div class="small">
-      ${c.phone ? "Teléfono: "+c.phone : "Sin teléfono"}
-    </div>
-
-    <div class="history">
-      <strong>Historial de visitas</strong>
-
-      ${hist.length
-        ? hist.map(a=>`
-          <div class="history-item">
-            <strong>${a.date} · ${a.time}</strong>
-            <br>
-            ${a.service}
-            ${a.price ? " · $"+a.price : ""}
-            ${a.notes ? "<br><span class='small'>"+a.notes+"</span>" : ""}
-          </div>
-        `).join("")
-        : "<div class='small'>Todavía no hay visitas.</div>"
-      }
-    </div>
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-      <button id="editClientBtn">✏️ Editar clienta</button>
-      <button id="clearHistoryBtn">🗑️ Borrar historial</button>
-    </div>
-  `;
-
-  document.getElementById("editClientBtn").onclick=()=>{
-    const newName=prompt("Nombre de la clienta:",c.name);
-    if(newName===null)return;
-
-    const newPhone=prompt("Teléfono:",c.phone||"");
-    if(newPhone===null)return;
-
-    const newNotes=prompt("Notas generales:",c.notes||"");
-    if(newNotes===null)return;
-
-    if(!newName.trim()){
-      alert("El nombre no puede quedar vacío.");
-      return;
-    }
-
-    c.name=newName.trim();
-    c.phone=newPhone.trim();
-    c.notes=newNotes.trim();
-
-    save();
-    render();
-    showProfile(cid);
-    alert("Clienta actualizada 💗");
-  };
-
-  document.getElementById("clearHistoryBtn").onclick=()=>{
-    if(!hist.length){
-      alert("Esta clienta no tiene historial.");
-      return;
-    }
-
-    if(confirm("¿Quieres borrar TODO el historial de "+c.name+"?")){
-      appts=appts.filter(a=>a.clientId!==cid);
-      save();
-      render();
-      showProfile(cid);
-      alert("Historial borrado 💗");
-    }
-  };
+function apptHtml(a,startH,height){
+ let c=db.clients.find(x=>x.id===a.clientId);return `<div class="appt" style="${posStyle(a,startH,height)}" onclick="event.stopPropagation();openApptActions('${a.id}')"><b>${esc(a.start)}–${esc(a.end)}</b><div>${esc(c?.name||'Sin clienta')}</div><div class="small">${esc(a.service||'')} ${a.price!==''?'· $'+esc(a.price):''}</div></div>`;
 }
-function openAppt(){
- if(!clients.length){openClient();return}
- aClient.innerHTML=clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
- aService.innerHTML=services.map(s=>`<option>${s[0]}</option>`).join("");
- aDate.value=iso(new Date());aTime.value="10:00";aPrice.value="";aNotes.value="";
- document.getElementById("apptModal").style.display="flex";
-} 
-  function showAppt(id){
-  const a=appts.find(x=>x.id===id);
-  if(!a)return;
-
-  const c=clients.find(x=>x.id===a.clientId);
-  if(!c)return;
-
-  const action=prompt(
-    `Cita de ${c.name}\n\n`+
-    `Servicio: ${a.service}\n`+
-    `Fecha: ${a.date}\n`+
-    `Hora: ${a.time}\n\n`+
-    `Escribe:\n`+
-    `1 = Mover cita\n`+
-    `2 = Cancelar cita\n`+
-    `3 = Cerrar`
-  );
-
-  if(action==="1"){
-    const newDate=prompt("Nueva fecha (AAAA-MM-DD):",a.date);
-    if(!newDate)return;
-
-    const newTime=prompt("Nueva hora (ej. 14:00):",a.time);
-    if(!newTime)return;
-
-    a.date=newDate;
-    a.time=newTime;
-
-    save();
-    render();
-    alert("Cita movida correctamente 💗");
-  }
-
-  if(action==="2"){
-    if(confirm(`¿Quieres cancelar la cita de ${c.name}?`)){
-      appts=appts.filter(x=>x.id!==id);
-      save();
-      render();
-      alert("Cita cancelada 💗");
-    }
-  }
-      }
-  function switchToNewClient(){closeM("apptModal");openClient()}
-function saveAppt(){
- appts.push({id:id(),clientId:aClient.value,service:aService.value,date:aDate.value,time:aTime.value,price:aPrice.value,notes:aNotes.value});
- save();closeM("apptModal");render();showProfile(aClient.value);
+function blockHtml(b,startH,height){
+ return `<div class="block" style="${posStyle(b,startH,height)}" onclick="event.stopPropagation();openBlockActions('${b.id}')"><b>${esc(b.start)}–${esc(b.end)}</b><div>${esc(b.category)}</div><div class="small">${esc(b.notes||'')}</div></div>`;
 }
-function openClient(){cName.value="";cPhone.value="";cNotes.value="";document.getElementById("clientModal").style.display="flex"}
-function saveClient(){
- if(!cName.value.trim())return alert("Pon el nombre de la clienta.");
- let cid=id();clients.push({id:cid,name:cName.value.trim(),phone:cPhone.value.trim(),notes:cNotes.value.trim()});save();closeM("clientModal");render();showProfile(cid);
+function dayClick(e,date){if(e.target.closest('.appt,.block'))return;openAppointment(date)}
+
+function renderMonth(){
+ let y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1), last=new Date(y,m+1,0),start=monday(first);
+ let cells=[];for(let i=0;i<42;i++){let d=new Date(start);d.setDate(start.getDate()+i);cells.push(d)}
+ document.getElementById('range').textContent=cursor.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+ document.getElementById('weekBtn').className='ghost';document.getElementById('monthBtn').className='';
+ let html='<div class="monthgrid">';
+ ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(x=>html+=`<div class="head">${x}</div>`);
+ cells.forEach(d=>{
+  let date=iso(d), other=d.getMonth()!==m;
+  let aps=db.appts.filter(a=>a.date===date), bl=db.blocks.filter(a=>a.date===date), rs=db.reminders.filter(r=>r.date===date);
+  html+=`<div class="monthcell ${date===today()?'today':''}" onclick="openDay('${date}')"><div class="monthnum" style="${other?'opacity:.35':''}">${d.getDate()}</div>`;
+  aps.slice(0,3).forEach(a=>{let c=db.clients.find(x=>x.id===a.clientId);html+=`<div class="mini ap">${esc(a.start)} ${esc(c?.name||'')}</div>`});
+  bl.slice(0,2).forEach(b=>html+=`<div class="mini bl">🏠 ${esc(b.category)}</div>`);
+  rs.slice(0,2).forEach(r=>html+=`<div class="mini rem">${r.type==='birthday'?'🎂':'🔔'} ${esc(r.name)}</div>`);
+  if(aps.length+bl.length+rs.length>7)html+=`<div class="mini">+ más</div>`;
+  html+='</div>';
+ });
+ html+='</div>';document.getElementById('calendar').innerHTML=html;
 }
-function closeM(x){document.getElementById(x).style.display="none"}
+function openDay(date){view='week';cursor=fromISO(date);render();setTimeout(()=>openAppointment(date),30)}
+
+function openAppointment(date=today(),id=''){
+ let a=db.appts.find(x=>x.id===id)||{id:'',date,start:'',end:'',clientId:'',service:'',price:'',notes:''};
+ openModal(`<div class="modalhead"><h2>${id?'✏️ Editar cita':'＋ Nueva cita'}</h2><button class="ghost" onclick="closeModal()">✕</button></div>
+ <form class="form" onsubmit="saveAppointment(event,'${id}')">
+ <div class="row"><div class="field"><label>Fecha</label><input id="aDate" type="date" value="${a.date||date}" required></div><div class="field"><label>Clienta</label><select id="aClient" required><option value="">Selecciona</option>${db.clients.map(c=>`<option value="${c.id}" ${c.id===a.clientId?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div></div>
+ <div class="row"><div class="field"><label>Hora de inicio</label><input id="aStart" type="time" value="${a.start}" required></div><div class="field"><label>Hora de término</label><input id="aEnd" type="time" value="${a.end}" required></div></div>
+ <div class="row"><div class="field"><label>Servicio</label><select id="aService" onchange="suggestPrice()"><option value="">Selecciona</option>${db.services.map(s=>`<option value="${s.name}" data-price="${s.price}" ${s.name===a.service?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div><div class="field"><label>Precio</label><input id="aPrice" type="number" min="0" step="1" value="${a.price}"></div></div>
+ <div class="field"><label>Notas</label><textarea id="aNotes">${esc(a.notes)}</textarea></div>
+ <div class="actions"><button type="submit">Guardar cita</button><button type="button" class="ghost" onclick="newClientFromAppointment()">＋ Nueva clienta</button>${id?`<button type="button" class="danger" onclick="deleteAppointment('${id}')">Cancelar cita</button>`:''}</div>
+ </form>`);
+}
+function suggestPrice(){let s=document.getElementById('aService').selectedOptions[0];if(s&&s.dataset.price&&Number(s.dataset.price)>0)document.getElementById('aPrice').value=s.dataset.price}
+function saveAppointment(e,id){
+ e.preventDefault();let a={id:id||uid(),date:aDate.value,start:aStart.value,end:aEnd.value,clientId:aClient.value,service:aService.value,price:aPrice.value,notes:aNotes.value.trim()};
+ if(!validTime(a.start)||!validTime(a.end)||timeMin(a.end)<=timeMin(a.start))return toast('Revisa las horas 💗');
+ if(!a.clientId)return toast('Selecciona una clienta');
+ let conflict=db.appts.find(x=>x.id!==a.id&&overlaps(a,x));if(conflict)return toast('Ese horario ya tiene otra cita');
+ let block=db.blocks.find(x=>overlaps(a,x));if(block)return toast('Ese horario está bloqueado en Mi tiempo');
+ let i=db.appts.findIndex(x=>x.id===a.id);if(i>=0)db.appts[i]=a;else db.appts.push(a);save();closeModal();render();toast(id?'Cita actualizada 💗':'Cita guardada 💗')
+}
+function deleteAppointment(id){if(confirm('¿Cancelar esta cita?')){db.appts=db.appts.filter(x=>x.id!==id);save();closeModal();render();toast('Cita cancelada 💗')}}
+function openApptActions(id){
+ let a=db.appts.find(x=>x.id===id),c=db.clients.find(x=>x.id===a.clientId);
+ openModal(`<div class="modalhead"><h2>📅 Cita</h2><button class="ghost" onclick="closeModal()">✕</button></div><div class="panel"><b>${esc(a.start)}–${esc(a.end)}</b><h3>${esc(c?.name||'Sin clienta')}</h3><div class="muted">${esc(a.service||'')}${a.price!==''?' · $'+esc(a.price):''}</div><p>${esc(a.notes||'')}</p><div class="actions"><button onclick="closeModal();openAppointment('${a.date}','${a.id}')">✏️ Modificar / mover</button><button class="danger" onclick="deleteAppointment('${a.id}')">Cancelar cita</button></div></div>`);
+}
+function newClientFromAppointment(){openClient('',true)}
+function openClients(){
+ openModal(`<div class="modalhead"><h2>👩🏻 Clientas</h2><button class="ghost" onclick="closeModal()">✕</button></div><button onclick="openClient()">＋ Agregar clienta</button><div class="list" style="margin-top:12px">${db.clients.length?db.clients.sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<div class="item"><div class="itemtop"><b>${esc(c.name)}</b><button class="small ghost" onclick="openClient('${c.id}')">Abrir</button></div><div class="muted">${esc(c.phone||'Sin teléfono')}</div></div>`).join(''):'<div class="empty">Todavía no hay clientas.</div>'}</div>`);
+}
+function openClient(id='',fromAppt=false){
+ let c=db.clients.find(x=>x.id===id)||{id:'',name:'',phone:'',notes:'',photos:[]};currentClient=c;
+ openModal(`<div class="modalhead"><h2>${id?'👩🏻 Expediente':'＋ Nueva clienta'}</h2><button class="ghost" onclick="${fromAppt?'openAppointment()':'openClients()'}">✕</button></div>
+ <form class="form" onsubmit="saveClient(event,'${id}',${fromAppt})"><div class="row"><div class="field"><label>Nombre</label><input id="cName" value="${esc(c.name)}" required></div><div class="field"><label>Teléfono</label><input id="cPhone" value="${esc(c.phone)}"></div></div><div class="field"><label>Notas del expediente</label><textarea id="cNotes">${esc(c.notes)}</textarea></div><button>Guardar clienta</button></form>
+ ${id?`<hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="modalhead"><h2>📸 Fotos</h2><label><button type="button" class="ghost" onclick="document.getElementById('photoInput').click()">＋ Agregar</button><input id="photoInput" type="file" accept="image/*" multiple hidden onchange="addPhotos('${id}',this.files)"></label></div><div class="photos" id="photos">${(c.photos||[]).map((p,i)=>`<div class="photo"><img src="${p}"><button onclick="removePhoto('${id}',${i})">✕</button></div>`).join('')}</div>`:''}`);
+}
+function saveClient(e,id,fromAppt){e.preventDefault();let c={id:id||uid(),name:cName.value.trim(),phone:cPhone.value.trim(),notes:cNotes.value.trim(),photos:(db.clients.find(x=>x.id===id)?.photos||[])};if(!c.name)return toast('Escribe el nombre');let i=db.clients.findIndex(x=>x.id===c.id);if(i>=0)db.clients[i]=c;else db.clients.push(c);save();if(fromAppt){closeModal();openAppointment();document.getElementById('aClient').value=c.id}else openClient(c.id);toast('Clienta guardada 💗')}
+async function addPhotos(id,files){let c=db.clients.find(x=>x.id===id);for(const f of files){if(!f.type.startsWith('image/'))continue;let data=await resizeImage(f,1000);c.photos.push(data)}save();openClient(id)}
+function resizeImage(file,max){return new Promise(res=>{let r=new FileReader();r.onload=()=>{let im=new Image();im.onload=()=>{let s=Math.min(1,max/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*s;cv.height=im.height*s;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.82))};im.src=r.result};r.readAsDataURL(file)})}
+function removePhoto(id,i){let c=db.clients.find(x=>x.id===id);c.photos.splice(i,1);save();openClient(id)}
+
+function openServices(){
+ openModal(`<div class="modalhead"><h2>💅 Servicios</h2><button class="ghost" onclick="closeModal()">✕</button></div><button onclick="editService()">＋ Agregar servicio</button><div class="list" style="margin-top:12px">${db.services.map(s=>`<div class="item"><div class="itemtop"><b>${esc(s.name)}</b><span>${s.price?'$'+s.price:'Sin precio fijo'}</span></div><div class="actions" style="margin-top:8px"><button class="small ghost" onclick="editService('${s.id}')">✏️ Editar</button><button class="small danger" onclick="deleteService('${s.id}')">Eliminar</button></div></div>`).join('')}</div>`);
+}
+function editService(id=''){let s=db.services.find(x=>x.id===id)||{id:'',name:'',price:''};openModal(`<div class="modalhead"><h2>${id?'✏️ Editar servicio':'＋ Nuevo servicio'}</h2><button class="ghost" onclick="openServices()">✕</button></div><form class="form" onsubmit="saveService(event,'${id}')"><div class="field"><label>Nombre</label><input id="sName" value="${esc(s.name)}" required></div><div class="field"><label>Precio sugerido (opcional)</label><input id="sPrice" type="number" min="0" value="${s.price}"></div><button>Guardar</button></form>`)}
+function saveService(e,id){e.preventDefault();let s={id:id||uid(),name:sName.value.trim(),price:sPrice.value};let i=db.services.findIndex(x=>x.id===s.id);if(i>=0)db.services[i]=s;else db.services.push(s);save();openServices();toast('Servicio guardado 💗')}
+function deleteService(id){if(confirm('¿Eliminar este servicio?')){db.services=db.services.filter(x=>x.id!==id);save();openServices()}}
+
+function openPersonal(){
+ openModal(`<div class="modalhead"><h2>🏠 Mi tiempo</h2><button class="ghost" onclick="closeModal()">✕</button></div><p class="muted">Estos bloques sí apartan horario para que no puedas agendar una clienta encima.</p><button onclick="editBlock()">＋ Apartar horario</button><div class="list" style="margin-top:12px">${db.blocks.sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).map(b=>`<div class="item"><b>${esc(b.date)} · ${esc(b.start)}–${esc(b.end)}</b><div>${esc(b.category)}</div><div class="muted">${esc(b.notes||'')}</div><div class="actions" style="margin-top:8px"><button class="small ghost" onclick="editBlock('${b.id}')">✏️</button><button class="small danger" onclick="deleteBlock('${b.id}')">Eliminar</button></div></div>`).join('')||'<div class="empty">No tienes horarios bloqueados.</div>'}</div>`);
+}
+function editBlock(id=''){let b=db.blocks.find(x=>x.id===id)||{id:'',date:today(),start:'',end:'',category:'Comida',notes:''};openModal(`<div class="modalhead"><h2>${id?'✏️ Editar horario':'＋ Mi tiempo'}</h2><button class="ghost" onclick="openPersonal()">✕</button></div><form class="form" onsubmit="saveBlock(event,'${id}')"><div class="field"><label>Tipo</label><select id="bCat">${['Comida','Dentista','Fisio','Personal','Otro'].map(x=>`<option ${x===b.category?'selected':''}>${x}</option>`).join('')}</select></div><div class="row"><div class="field"><label>Fecha</label><input id="bDate" type="date" value="${b.date}" required></div><div class="field"><label>Inicio</label><input id="bStart" type="time" value="${b.start}" required></div></div><div class="field"><label>Término</label><input id="bEnd" type="time" value="${b.end}" required></div><div class="field"><label>Notas</label><textarea id="bNotes">${esc(b.notes)}</textarea></div><button>Guardar</button></form>`)}
+function saveBlock(e,id){e.preventDefault();let b={id:id||uid(),date:bDate.value,start:bStart.value,end:bEnd.value,category:bCat.value,notes:bNotes.value.trim()};if(timeMin(b.end)<=timeMin(b.start))return toast('Revisa las horas');if(db.appts.some(a=>overlaps(b,a)))return toast('Ya tienes una cita en ese horario');if(db.blocks.some(x=>x.id!==b.id&&overlaps(b,x)))return toast('Ese horario ya está bloqueado');let i=db.blocks.findIndex(x=>x.id===b.id);if(i>=0)db.blocks[i]=b;else db.blocks.push(b);save();closeModal();render();toast('Horario apartado 💗')}
+function openBlockActions(id){let b=db.blocks.find(x=>x.id===id);openModal(`<div class="modalhead"><h2>🏠 ${esc(b.category)}</h2><button class="ghost" onclick="closeModal()">✕</button></div><p>${esc(b.date)} · ${esc(b.start)}–${esc(b.end)}</p><p class="muted">${esc(b.notes||'')}</p><div class="actions"><button onclick="editBlock('${id}')">✏️ Modificar</button><button class="danger" onclick="deleteBlock('${id}')">Eliminar</button></div>`)}
+function deleteBlock(id){if(confirm('¿Eliminar este horario?')){db.blocks=db.blocks.filter(x=>x.id!==id);save();closeModal();render()}}
+
+function openReminders(){
+ openModal(`<div class="modalhead"><h2>🔔 Recordatorios</h2><button class="ghost" onclick="closeModal()">✕</button></div><p class="muted">Los cumpleaños son recordatorios y nunca bloquean horarios.</p><button onclick="editReminder()">＋ Nuevo recordatorio</button><div class="list" style="margin-top:12px">${db.reminders.sort((a,b)=>a.date.localeCompare(b.date)).map(r=>`<div class="item"><b>${r.type==='birthday'?'🎂':'🔔'} ${esc(r.name)}</b><div>${esc(r.date)}${r.yearly?' · anual':''}</div><div class="muted">${esc(r.notes||'')}</div><div class="actions" style="margin-top:8px"><button class="small ghost" onclick="editReminder('${r.id}')">✏️</button><button class="small danger" onclick="deleteReminder('${r.id}')">Eliminar</button></div></div>`).join('')||'<div class="empty">No hay recordatorios.</div>'}</div>`);
+}
+function editReminder(id=''){let r=db.reminders.find(x=>x.id===id)||{id:'',date:today(),name:'',type:'birthday',yearly:true,notes:''};openModal(`<div class="modalhead"><h2>${id?'✏️ Editar':'＋ Recordatorio'}</h2><button class="ghost" onclick="openReminders()">✕</button></div><form class="form" onsubmit="saveReminder(event,'${id}')"><div class="row"><div class="field"><label>Tipo</label><select id="rType"><option value="birthday" ${r.type==='birthday'?'selected':''}>🎂 Cumpleaños</option><option value="other" ${r.type==='other'?'selected':''}>🔔 Otro</option></select></div><div class="field"><label>Nombre</label><input id="rName" value="${esc(r.name)}" required></div></div><div class="field"><label>Fecha</label><input id="rDate" type="date" value="${r.date}" required></div><div class="field"><label>Nota</label><textarea id="rNotes">${esc(r.notes)}</textarea></div><label><input id="rYearly" type="checkbox" ${r.yearly?'checked':''}> Repetir cada año</label><button>Guardar</button></form>`)}
+function saveReminder(e,id){e.preventDefault();let r={id:id||uid(),date:rDate.value,name:rName.value.trim(),type:rType.value,yearly:rYearly.checked,notes:rNotes.value.trim()};let i=db.reminders.findIndex(x=>x.id===r.id);if(i>=0)db.reminders[i]=r;else db.reminders.push(r);save();closeModal();render();toast('Recordatorio guardado 💗')}
+function deleteReminder(id){if(confirm('¿Eliminar este recordatorio?')){db.reminders=db.reminders.filter(x=>x.id!==id);save();openReminders()}}
+
+function openSettings(){
+ let st=db.settings||{startHour:6,endHour:22};
+ openModal(`<div class="modalhead"><h2>⚙️ Configuración</h2><button class="ghost" onclick="closeModal()">✕</button></div><form class="form" onsubmit="saveSettings(event)"><p class="muted">Elige el rango que quieres ver en la vista semanal. Puedes usar desde 00:00 hasta 23:00.</p><div class="row"><div class="field"><label>Hora de inicio</label><input id="setStart" type="number" min="0" max="22" value="${st.startHour}"></div><div class="field"><label>Hora de fin</label><input id="setEnd" type="number" min="1" max="24" value="${st.endHour}"></div></div><button>Guardar horario</button></form><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="panel"><b>☁️ Sincronización</b><p class="muted">Esta versión queda preparada para funcionar como app en celular y tablet. La sincronización real entre dispositivos requiere conectar una base de datos en la nube; no se activará con datos inventados ni expondrá tus citas.</p></div>`);
+}
+function saveSettings(e){e.preventDefault();let a=Number(setStart.value),b=Number(setEnd.value);if(b<=a)return toast('La hora final debe ser mayor');db.settings={startHour:a,endHour:b};save();closeModal();render();toast('Horario actualizado 💗')}
+
 render();
-  function openPersonal(){
-    
-  let old = document.getElementById("personalModal");
-  if(old) old.remove();
-
-    const today = new Date().toISOString().slice(0,10);
-    
-  const todayApps = appts.filter(a => a.date === today);
-    
-  
- const list = todayAppts.length
-    ? todayAppts.map(a => {
-        const c = clients.find(x => x.id === a.clientId);
-        return `
-          <div style="
-            background:#fff;
-            border:1px solid #eadbea;
-            border-radius:12px;
-            padding:12px;
-            margin-bottom:10px;
-          ">
-            <strong>${a.time || "--:--"}${a.endTime ? " – " + a.endTime : ""}</strong>
-            <div style="margin-top:4px">
-              ${c ? c.name : "Sin clienta"}
-            </div>
-            <div class="small">
-              ${a.service || "Sin servicio"}
-              ${a.price ? " · $" + a.price : ""}
-            </div>
-
-            ${a.notes ? `
-              <div class="small" style="margin-top:5px">
-                ${a.notes}
-              </div>
-            ` : ""}
-
-            <button
-              class="ghost"
-              style="margin-top:8px"
-              onclick="editMyTime('${a.id}')"
-            >
-              ✏️ Editar horario
-            </button>
-          </div>
-        `;
-      }).join("")
-    : `<div class="small">Hoy no tienes citas agendadas. 💗</div>`;
-
-  const modal = document.createElement("div");
-  modal.id = "personalModal";
-  modal.className = "modal";
-  modal.style.display = "flex";
-
-  modal.innerHTML = `
-    <div style="
-      background:#fff;
-      width:min(92%,520px);
-      max-height:85vh;
-      overflow:auto;
-      border-radius:18px;
-      padding:20px;
-    ">
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:15px;
-      ">
-        <h2 style="margin:0">🏠 Mi tiempo</h2>
-
-        <button
-          class="ghost"
-          onclick="closeM('personalModal')"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div class="small" style="margin-bottom:14px">
-        ${fmt(new Date(), {day:"numeric", month:"long", year:"numeric"})}
-      </div>
-
-      ${list}
-
-      <button
-        style="width:100%;margin-top:8px"
-        onclick="closeM('personalModal')"
-      >
-        Cerrar
-      </button>
-    </div>
-    
-  `;
-
-  document.body.appendChild(modal);
-}
-
-function editMyTime(id){
-  const a = appts.find(x => x.id === id);
-  if(!a) return;
-
-  const newStart = prompt(
-    "Hora de inicio (ej. 10:00):",
-    a.time || ""
-  );
-
-  if(newStart === null) return;
-
-  const newEnd = prompt(
-    "Hora de término (ej. 13:00):",
-    a.endTime || ""
-  );
-
-  if(newEnd === null) return;
-
-  a.time = newStart.trim();
-  a.endTime = newEnd.trim();
-
-  save();
-  render();
-
-  closeM("personalModal");
-  openPersonal();
-
-  alert("Horario actualizado 💗");
-  }
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js"));
-}
 </script>
 </body>
 </html>
