@@ -311,8 +311,8 @@ alert("paso el old");
   const todayApps = apps
     .filter(a => a.date === today)
     .sort((a,b) => a.time.localeCompare(b.time));
-
-  const list = todayApps.length
+    alert("pasé todayApps");
+ const list = todayApps.length
     ? todayApps.map(a => {
         const c = clients.find(x => x.id === a.clientId);
         return `
