@@ -306,9 +306,7 @@ render();
   if(old) old.remove();
 
     const today = new Date().toISOString().slice(0,10);
-  const todayApps = apps
-    .filter(a => a.date === today)
-    .sort((a,b) => a.time.localeCompare(b.time));
+  const todayApps = apps.filter(a => a.date === today);
     
  const list = todayApps.length
     ? todayApps.map(a => {
