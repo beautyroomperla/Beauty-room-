@@ -301,14 +301,14 @@ function saveClient(){
 function closeM(x){document.getElementById(x).style.display="none"}
 render();
   function openPersonal(){
-    alert("ENTRÉ A MI TIEMPO");
+    
   let old = document.getElementById("personalModal");
   if(old) old.remove();
-alert("PASÓ EL OLD");
+
     const today = new Date().toISOString().slice(0,10);
-    alert("APPS: " + typeof apps + " / " + Array.isArray(apps));
+    
   const todayApps = apps.filter(a => a.date === today);
-    alert("PASÓ TODAYAPPS");
+    
   
  const list = todayApps.length
     ? todayApps.map(a => {
