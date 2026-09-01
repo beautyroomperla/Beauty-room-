@@ -96,7 +96,7 @@ function fromISO(s){let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d
 function today(){return iso(new Date())}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function timeMin(t){let [h,m]=String(t||'').split(':').map(Number);return (h||0)*60+(m||0)}
-function validTime(t){return /^([01]\\d|2[0-3]):[0-5]\\d$/.test(t)}
+function validTime(t){return /^([01]\d|2[0-3]):[0-5]\d$/.test(t)}
 function overlaps(a,b){return a.date===b.date && timeMin(a.start)<timeMin(b.end) && timeMin(b.start)<timeMin(a.end)}
 function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
 function openModal(html){document.getElementById('dialog').innerHTML=html;document.getElementById('modal').classList.add('open')}
@@ -178,7 +178,7 @@ function openAppointment(date=today(),id=''){
 function suggestPrice(){let s=document.getElementById('aService').selectedOptions[0];if(s&&s.dataset.price&&Number(s.dataset.price)>0)document.getElementById('aPrice').value=s.dataset.price}
 function saveAppointment(e,id){
  e.preventDefault();let a={id:id||uid(),date:aDate.value,start:aStart.value,end:aEnd.value,clientId:aClient.value,service:aService.value,price:aPrice.value,notes:aNotes.value.trim()};
- if(!validTime(a.start)||!validTime(a.end)||timeMin(a.end)<=timeMin(a.start))return toast('Revisa las horas 💗');
+ if(timeMin(a.end)<=timeMin(a.start))return toast('Revisa las horas 💗');
  if(!a.clientId)return toast('Selecciona una clienta');
  let conflict=db.appts.find(x=>x.id!==a.id&&overlaps(a,x));if(conflict)return toast('Ese horario ya tiene otra cita');
  let block=db.blocks.find(x=>overlaps(a,x));if(block)return toast('Ese horario está bloqueado en Mi tiempo');
