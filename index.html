@@ -229,9 +229,17 @@ function saveAppointment(e,id){
  let i=db.appts.findIndex(x=>x.id===a.id);if(i>=0)db.appts[i]=a;else db.appts.push(a);save();closeModal();render();toast(id?'Cita actualizada 💗':'Cita guardada 💗')
 }
 function deleteAppointment(id){if(confirm('¿Cancelar esta cita?')){db.appts=db.appts.filter(x=>x.id!==id);save();closeModal();render();toast('Cita cancelada 💗')}}
+function whatsappReminder(id){
+ let a=db.appts.find(x=>x.id===id),c=db.clients.find(x=>x.id===a?.clientId);
+ if(!a)return;
+ let name=c?.name||'bonita', d=fromISO(a.date);
+ let dateText=d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+ let message=`Hola ${name} 💕 Te recuerdo tu cita en Beauty Room para el ${dateText} a las ${a.start}. ¿Me confirmas por favor?`;
+ window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank');
+}
 function openApptActions(id){
  let a=db.appts.find(x=>x.id===id),c=db.clients.find(x=>x.id===a.clientId);
- openModal(`<div class="modalhead"><h2>📅 Cita</h2><button class="ghost" onclick="closeModal()">✕</button></div><div class="panel"><b>${esc(a.start)}–${esc(a.end)}</b><h3>${esc(c?.name||'Sin clienta')}</h3><div class="muted">${esc(a.service||'')}${a.price!==''?' · $'+esc(a.price):''}</div><p>${esc(a.notes||'')}</p><div class="actions"><button onclick="closeModal();openAppointment('${a.date}','${a.id}')">✏️ Modificar / mover</button><button class="danger" onclick="deleteAppointment('${a.id}')">Cancelar cita</button></div></div>`);
+ openModal(`<div class="modalhead"><h2>📅 Cita</h2><button class="ghost" onclick="closeModal()">✕</button></div><div class="panel"><b>${esc(a.start)}–${esc(a.end)}</b><h3>${esc(c?.name||'Sin clienta')}</h3><div class="muted">${esc(a.service||'')}${a.price!==''?' · $'+esc(a.price):''}</div><p>${esc(a.notes||'')}</p><div class="actions"><button onclick="whatsappReminder('${a.id}')">💬 WhatsApp</button><button onclick="closeModal();openAppointment('${a.date}','${a.id}')">✏️ Modificar / mover</button><button class="danger" onclick="deleteAppointment('${a.id}')">Cancelar cita</button></div></div>`);
 }
 function newClientFromAppointment(){openClient('',true)}
 function openClients(){
