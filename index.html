@@ -37,13 +37,33 @@ header{display:flex;gap:10px;align-items:center;justify-content:space-between;fl
 .modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modalhead h2{margin:0;font-size:20px}.muted{color:var(--muted)}.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}.itemtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.empty{padding:25px;text-align:center;color:var(--muted)}
 .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.photo{position:relative}.photo img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.photo button{position:absolute;right:4px;top:4px;padding:4px 7px;background:#fff}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#493b44;color:#fff;padding:10px 15px;border-radius:12px;display:none;z-index:100}
+#authScreen{position:fixed;inset:0;background:linear-gradient(135deg,#fff7fb,#eef8f0);display:flex;align-items:center;justify-content:center;padding:18px;z-index:1000}
+.authbox{width:min(94vw,430px);background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 15px 45px #6c49631a}.authlogo{font-size:28px;font-weight:900;text-align:center}.authsub{text-align:center;color:var(--muted);font-size:13px;margin:6px 0 18px}.authbox h2{margin:0 0 12px}.authbox .field{margin-bottom:10px}.authbox input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px}.authmsg{font-size:12px;margin-top:10px;min-height:18px}.cloudpill{font-size:11px;padding:5px 9px;border-radius:999px;background:#eef8f0;color:#4f7d5b;font-weight:800}.cloudpill.off{background:#fff0f2;color:#9a5360}
+
 @media(max-width:700px){.wrap{padding:9px}.brand{font-size:20px}.row{grid-template-columns:1fr}.actions button{padding:9px}.range{min-width:auto}.monthgrid{min-width:700px}}
 </style>
 </head>
 <body>
+<div id="authScreen">
+  <div class="authbox">
+    <div class="authlogo">🌸 Beauty Room</div>
+    <div class="authsub">Tu agenda sincronizada en celular y tablet 💗</div>
+    <h2 id="authTitle">Entrar</h2>
+    <form id="authForm" class="form" onsubmit="submitAuth(event)">
+      <div class="field"><label>Correo electrónico</label><input id="authEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label>Contraseña</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required></div>
+      <button id="authSubmit" type="submit">Entrar</button>
+    </form>
+    <div class="actions" style="margin-top:10px;justify-content:center">
+      <button class="ghost small" type="button" onclick="toggleAuthMode()" id="authToggle">Crear mi cuenta</button>
+    </div>
+    <div id="authMsg" class="authmsg"></div>
+    <div class="muted" style="font-size:11px;text-align:center;margin-top:12px">Usa el mismo correo y contraseña en tu celular y en tu tablet.</div>
+  </div>
+</div>
 <div class="wrap">
 <header>
-  <div><div class="brand">🌸 Beauty Room</div><div class="sub">Agenda · clientas · servicios · recordatorios</div></div>
+  <div><div class="brand">🌸 Beauty Room <span id="cloudStatus" class="cloudpill off">☁️ Sin conectar</span></div><div class="sub">Agenda · clientas · servicios · recordatorios</div></div>
   <div class="actions">
     <button onclick="openAppointment()">＋ Cita</button>
     <button class="ghost" onclick="openClients()">👩🏻 Clientas</button>
@@ -72,7 +92,13 @@ header{display:flex;gap:10px;align-items:center;justify-content:space-between;fl
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="dialog" class="dialog"></div></div>
 <div id="toast" class="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL='https://demdyywrkwfjeyctvemq.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_TrmnCBdIOmtMXNH0srQIww_P04fRGRg';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const SYNC_META_KEY='beautyRoomV3_syncMeta';
+let currentUser=null, cloudTimer=null, authMode='login';
 const KEY='beautyRoomV3';
 const defaultServices=[
  ['Uñas acrílicas',0],['Gel semipermanente',0],['Rubber',0],['Corte',80],['Manicure',250],
@@ -88,7 +114,25 @@ function load(){
  }catch(e){}
  return {clients:[],appts:[],blocks:[],reminders:[],services:defaultServices.map(([name,price])=>({id:uid(),name,price}))};
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+ localStorage.setItem(SYNC_META_KEY,JSON.stringify({updatedAt:new Date().toISOString()}));
+ scheduleCloudSave();
+}
+function setCloudStatus(text,off=false){let e=document.getElementById('cloudStatus');if(e){e.textContent=text;e.className='cloudpill'+(off?' off':'')}}
+function scheduleCloudSave(){
+ if(!currentUser)return;
+ clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>cloudSave(),700);
+}
+async function cloudSave(){
+ if(!currentUser)return;
+ setCloudStatus('☁️ Guardando…');
+ const now=new Date().toISOString();
+ const {error}=await supabaseClient.from('beautyroom_data').upsert({user_id:currentUser.id,data:db,updated_at:now},{onConflict:'user_id'});
+ if(error){console.error(error);setCloudStatus('☁️ Sin conexión',true);return}
+ localStorage.setItem(SYNC_META_KEY,JSON.stringify({updatedAt:now}));
+ setCloudStatus('☁️ Sincronizado');
+}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
@@ -228,9 +272,54 @@ function deleteReminder(id){if(confirm('¿Eliminar este recordatorio?')){db.remi
 
 function openSettings(){
  let st=db.settings||{startHour:6,endHour:22};
- openModal(`<div class="modalhead"><h2>⚙️ Configuración</h2><button class="ghost" onclick="closeModal()">✕</button></div><form class="form" onsubmit="saveSettings(event)"><p class="muted">Elige el rango que quieres ver en la vista semanal. Puedes usar desde 00:00 hasta 23:00.</p><div class="row"><div class="field"><label>Hora de inicio</label><input id="setStart" type="number" min="0" max="22" value="${st.startHour}"></div><div class="field"><label>Hora de fin</label><input id="setEnd" type="number" min="1" max="24" value="${st.endHour}"></div></div><button>Guardar horario</button></form><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="panel"><b>☁️ Sincronización</b><p class="muted">Esta versión queda preparada para funcionar como app en celular y tablet. La sincronización real entre dispositivos requiere conectar una base de datos en la nube; no se activará con datos inventados ni expondrá tus citas.</p></div>`);
+ openModal(`<div class="modalhead"><h2>⚙️ Configuración</h2><button class="ghost" onclick="closeModal()">✕</button></div><form class="form" onsubmit="saveSettings(event)"><p class="muted">Elige el rango que quieres ver en la vista semanal. Puedes usar desde 00:00 hasta 23:00.</p><div class="row"><div class="field"><label>Hora de inicio</label><input id="setStart" type="number" min="0" max="22" value="${st.startHour}"></div><div class="field"><label>Hora de fin</label><input id="setEnd" type="number" min="1" max="24" value="${st.endHour}"></div></div><button>Guardar horario</button></form><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="panel"><b>☁️ Sincronización</b><p class="muted">Tu agenda se guarda en este dispositivo y en la nube cuando estás conectada. Usa la misma cuenta en tu celular y tablet.</p><div class="actions" style="margin-top:10px"><span class="cloudpill" id="settingsCloud">☁️ Sincronizado</span><button type="button" class="ghost" onclick="syncNow()">↻ Sincronizar ahora</button><button type="button" class="danger" onclick="logout()">Cerrar sesión</button></div></div>`);
 }
 function saveSettings(e){e.preventDefault();let a=Number(setStart.value),b=Number(setEnd.value);if(b<=a)return toast('La hora final debe ser mayor');db.settings={startHour:a,endHour:b};save();closeModal();render();toast('Horario actualizado 💗')}
+
+function toggleAuthMode(){authMode=authMode==='login'?'signup':'login';document.getElementById('authTitle').textContent=authMode==='login'?'Entrar':'Crear cuenta';document.getElementById('authSubmit').textContent=authMode==='login'?'Entrar':'Crear cuenta';document.getElementById('authToggle').textContent=authMode==='login'?'Crear mi cuenta':'Ya tengo cuenta';document.getElementById('authMsg').textContent='';document.getElementById('authPassword').value=''}
+function authMessage(t){document.getElementById('authMsg').textContent=t}
+async function submitAuth(e){
+ e.preventDefault();
+ const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;
+ authMessage('Un momento…');
+ if(authMode==='signup'){
+   const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
+   if(error){authMessage(error.message);return}
+   if(data.session){await finishLogin(data.session)}else{authMessage('Cuenta creada 💗 Revisa tu correo para confirmar la cuenta y después vuelve a entrar aquí.');}
+ }else{
+   const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+   if(error){authMessage('No pude entrar: '+error.message);return}
+   await finishLogin(data.session);
+ }
+}
+async function finishLogin(session){
+ currentUser=session?.user||null;
+ if(!currentUser)return;
+ document.getElementById('authScreen').style.display='none';
+ setCloudStatus('☁️ Conectando…');
+ const {data:remote,error}=await supabaseClient.from('beautyroom_data').select('data,updated_at').eq('user_id',currentUser.id).maybeSingle();
+ if(error){console.error(error);setCloudStatus('☁️ Sin conexión',true);toast('Entraste, pero no pude leer la nube');render();return}
+ const localMeta=JSON.parse(localStorage.getItem(SYNC_META_KEY)||'null');
+ if(remote?.data){
+   const remoteTime=new Date(remote.updated_at||0).getTime(),localTime=new Date(localMeta?.updatedAt||0).getTime();
+   if(localTime>remoteTime){
+     await cloudSave();
+   }else{
+     db={...remote.data,clients:remote.data.clients||[],appts:remote.data.appts||[],blocks:remote.data.blocks||[],reminders:remote.data.reminders||[],services:remote.data.services||defaultServices.map(([name,price])=>({id:uid(),name,price}))};
+     localStorage.setItem(KEY,JSON.stringify(db));
+     localStorage.setItem(SYNC_META_KEY,JSON.stringify({updatedAt:remote.updated_at}));
+     setCloudStatus('☁️ Sincronizado');
+   }
+ }else{
+   await cloudSave();
+ }
+ render();
+}
+async function syncNow(){if(!currentUser)return toast('Primero inicia sesión');await cloudSave();toast('Agenda sincronizada 💗')}
+async function logout(){if(!confirm('¿Cerrar sesión en este dispositivo?'))return;await supabaseClient.auth.signOut();currentUser=null;setCloudStatus('☁️ Sin conectar',true);document.getElementById('authScreen').style.display='flex';authMode='login';document.getElementById('authTitle').textContent='Entrar';document.getElementById('authSubmit').textContent='Entrar';authMessage('Sesión cerrada. Tus datos locales siguen aquí.');}
+
+supabaseClient.auth.onAuthStateChange((event,session)=>{if(session&& !currentUser)finishLogin(session);});
+(async()=>{const {data:{session}}=await supabaseClient.auth.getSession();if(session)await finishLogin(session);else{document.getElementById('authScreen').style.display='flex';setCloudStatus('☁️ Sin conectar',true);render()}})();
 
 render();
 </script>
